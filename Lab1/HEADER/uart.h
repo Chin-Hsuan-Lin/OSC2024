@@ -2,8 +2,9 @@
 
 void uart_init();
 void uart_send(unsigned int c);
-char uart_getc();
-void uart_puts(char *s);
+char uart_recv();
+void uart_send_string(char *s);
+void uart_binary_to_hex(unsigned int d);
 
 #define AUX_ENABLE      ((volatile unsigned int*)(MMIO_BASE+0x00215004))
 #define AUX_MU_IO       ((volatile unsigned int*)(MMIO_BASE+0x00215040))

@@ -39,8 +39,58 @@ void uart_init(){
     // *Set baud rate to 115200
     //  baudrate = system_clock_freq / (8 * ( baudrate_reg + 1 )) 
     *AUX_MU_BAUD = 270;
+    //  *Disable FIFO
+    *AUX_MU_IIR = 0xc6;
     // *Enable transmitter and receiver
     *AUX_MU_CNTL = 3;
     //Finish
 
 }
+
+void uart_send( unsigned int c ){
+    // bit five is set to 1 if the transmit (is empty) FIFO can accept at least one
+    while(!(*AUX_MU_LSR&0x20)){
+        break;
+    }
+    *AUX_MU_IO = c;
+}
+
+char uart_recv(){
+    // bit zero is set to 1 indicates that the data is ready
+    while(!(*AUX_MU_LSR&0x01)){
+        break;
+    }
+    char r = (char)(*AUX_MU_IO);
+    return r=='\r'? '\n':r;
+}
+
+void uart_send_string(char *s){
+    for(int i = 0; s[i]!='\0'; ++i){
+        if((char)s[i] == '\n'){
+            uart_send('\r');
+        }
+        uart_send((char)s[i]);
+    }
+}
+
+void uart_binary_to_hex(unsigned int d){
+    unsigned int n;
+    int c;
+    uart_send_string("0x");
+    for(c=28; c>=0; c-=4){
+        //get the highest 4 bits
+        n = (d>>c)&0xF;
+        // if n = 0-9 => '0' - '9', 10-15 => 'A'-'F'
+        n += (n>9? 0x37: 0x30);
+        uart_send(n);
+    }
+
+}
+/*
+10 + 0x37 = 0x41 (which is the ASCII code for the character 'A')
+11 + 0x37 = 0x42 (which is the ASCII code for the character 'B')
+12 + 0x37 = 0x43 (which is the ASCII code for the character 'C')
+13 + 0x37 = 0x44 (which is the ASCII code for the character 'D')
+14 + 0x37 = 0x45 (which is the ASCII code for the character 'E')
+15 + 0x37 = 0x46 (which is the ASCII code for the character 'F')
+*/
