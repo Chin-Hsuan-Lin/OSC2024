@@ -1,7 +1,4 @@
 #include "gpio.h"
-#ifdef _MAILBOX_H_
-#define _MAILBOX_H_
-
 extern volatile unsigned int mbox[32];
 
 //Mailbox channels
@@ -21,9 +18,9 @@ extern volatile unsigned int mbox[32];
 #define BUFFER_REQUEST_SUCCUSS  0x80000000
 #define BUFFER_REQUEST_FAILED   0x80000001
 
-#define MBOX_RESPONSE   0x80000000
-#define MBOX_FULL       0x80000000
-#define MBOX_EMPTY      0x40000000
+#define MB_RESPONSE   0x80000000
+#define MB_FULL       0x80000000
+#define MB_EMPTY      0x40000000
 
 //Mailbox tags
 #define MB_TAG_GET_FRAME_REVISION   0x1
@@ -50,4 +47,3 @@ extern volatile unsigned int mbox[32];
 #define MB_WRITE    ((volatile unsigned int*)(MB_BASE+0x20))
 
 int mbox_call(unsigned char c);
-#endif
