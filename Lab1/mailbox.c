@@ -1,4 +1,4 @@
-#include "HEADER/mailbox.h"
+#include "mailbox.h"
 
 volatile unsigned int __attribute__((aligned(16))) mbox[36];
 

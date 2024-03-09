@@ -1,4 +1,4 @@
-#include "HEADER/uart.h"
+#include "uart.h"
 
 void uart_init(){
     //GPIO alternative function selection
