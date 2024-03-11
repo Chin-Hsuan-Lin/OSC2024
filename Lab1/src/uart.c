@@ -4,6 +4,24 @@ void uart_init(){
     //GPIO alternative function selection
     register unsigned int selector;
 
+    //Mini UART initialize
+    // *Enable mini uart (this also enables access to all the mini uart registers)
+    *AUX_ENABLE |= 1;
+    // *Disable the receiver and transmitter before the configuration is finished
+    //  Disable the auto flow control
+    *AUX_MU_CNTL = 0;
+    // *Disable receive and transmit interrupts
+    *AUX_MU_IER = 0;
+    // *Enable 8 bit mode (mini uart supports either 7- or 8-bit operations)
+    *AUX_MU_LCR = 3;
+    // *The RTS line is used in the flow control and we don't need it. Set high all the time
+    *AUX_MU_MCR = 0;
+    // *Set baud rate to 115200
+    //  baudrate = system_clock_freq / (8 * ( baudrate_reg + 1 )) 
+    *AUX_MU_BAUD = 270;
+    //  *Disable FIFO
+    *AUX_MU_IIR = 6;
+
     selector = *GPFSEL1;
     selector &= ~(7<<12);   //clean gpio14
     selector |= 2<<12;      //set alt5 for gpio14
@@ -24,23 +42,7 @@ void uart_init(){
     //flush the modify bits.
     *GPPUDCLK0 = 0;
 
-    //Mini UART initialize
-    // *Enable mini uart (this also enables access to all the mini uart registers)
-    *AUX_ENABLE = 1;
-    // *Disable the receiver and transmitter before the configuration is finished
-    //  Disable the auto flow control
-    *AUX_MU_CNTL = 0;
-    // *Disable receive and transmit interrupts
-    *AUX_MU_IER = 0;
-    // *Enable 8 bit mode (mini uart supports either 7- or 8-bit operations)
-    *AUX_MU_LCR = 3;
-    // *The RTS line is used in the flow control and we don't need it. Set high all the time
-    *AUX_MU_MCR = 0;
-    // *Set baud rate to 115200
-    //  baudrate = system_clock_freq / (8 * ( baudrate_reg + 1 )) 
-    *AUX_MU_BAUD = 270;
-    //  *Disable FIFO
-    *AUX_MU_IIR = 0xc6;
+    
     // *Enable transmitter and receiver
     *AUX_MU_CNTL = 3;
     //Finish
@@ -49,17 +51,13 @@ void uart_init(){
 
 void uart_send( unsigned int c ){
     // bit five is set to 1 if the transmit (is empty) FIFO can accept at least one
-    while(!(*AUX_MU_LSR&0x20)){
-        break;
-    }
+    while(!(*AUX_MU_LSR&0x20)){};
     *AUX_MU_IO = c;
 }
 
 char uart_recv(){
     // bit zero is set to 1 indicates that the data is ready
-    while(!(*AUX_MU_LSR&0x01)){
-        break;
-    }
+    while(!(*AUX_MU_LSR&0x01)){};
     char r = (char)(*AUX_MU_IO);
     return r=='\r'? '\n':r;
 }

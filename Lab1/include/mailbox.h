@@ -1,5 +1,5 @@
 #include "gpio.h"
-extern volatile unsigned int mbox[36];
+extern volatile unsigned int mbox[64];
 
 //Mailbox channels
 #define MB_POWER_MANAGMENT      0
@@ -46,4 +46,4 @@ extern volatile unsigned int mbox[36];
 #define MB_CONFIG   ((volatile unsigned int*)(MB_BASE+0x1C))
 #define MB_WRITE    ((volatile unsigned int*)(MB_BASE+0x20))
 
-int mbox_call(unsigned char c);
+int mbox_call();

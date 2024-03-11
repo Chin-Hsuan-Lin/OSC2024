@@ -1,6 +1,6 @@
 SECTIONS
 {
-    . = 0x80000; //setting starting point
+    . = 0x80000;
     .text : { KEEP(*(.text.boot)) *(.text .text.* .gnu.linkonce.t*) }
     .rodata : { *(.rodata .rodata.* .gnu.linkonce.r*) }
     PROVIDE(_data = .);

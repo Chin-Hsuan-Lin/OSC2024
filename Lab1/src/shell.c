@@ -49,12 +49,12 @@ void cli_cmd_exec(char* buffer){
         do_cmd_hello();
     }
     else if(cli_cmd_strcmp(buffer, "help") == 0){
-        dp_cmd_help();
+        do_cmd_help();
     }
     else if(cli_cmd_strcmp(buffer, "info") == 0){
         do_cmd_info();
     }
-    else if(cli_cmd_strcmp(*buffer, "reboot") == 0){
+    else if(cli_cmd_strcmp(buffer, "reboot") == 0){
         do_cmd_reboot();
     }
     else if(*buffer){
@@ -78,7 +78,7 @@ void do_cmd_help(){
     }
 }
 
-void do_cmd_help(){
+void do_cmd_hello(){
     uart_send_string("Hello World!\r\n");
 }
 
@@ -92,7 +92,7 @@ void do_cmd_info(){
     mbox[4] = MB_TAG_REQUEST_CODE;
     mbox[5] = 0;
     mbox[6] = MB_TAG_LAST_BYTE;
-    mbox_call(mbox);
+    mbox_call();
     uart_send_string("Hardware Revision\t: ");
     uart_binary_to_hex(mbox[5]);
     uart_send_string("\r\n");
@@ -105,7 +105,7 @@ void do_cmd_info(){
     mbox[5] = 0;
     mbox[6] = 0;
     mbox[7] = MB_TAG_LAST_BYTE;
-    mbox_call(mbox);
+    mbox_call();
     uart_send_string("ARM Memory Base Address\t: ");
     uart_binary_to_hex(mbox[5]);
     uart_send_string("\r\n");
